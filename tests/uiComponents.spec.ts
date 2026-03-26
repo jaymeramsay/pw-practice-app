@@ -50,10 +50,10 @@ test.describe("Form Layouts Page", () => {
 test.describe("Modals and Overlays Page", () => {
     test.beforeEach(async ({ page }) => {
         await page.getByText('Modals & Overlays').click();
-        await page.getByText('Toastr').click();
     })
 
     test('checkboxes', async ({ page }) => {
+        await page.getByText('Toastr').click();
         await page.getByRole('checkbox', { name: 'Hide on click' }).check({ force: true }); 
         await page.getByRole('checkbox', { name: 'Prevent arising of duplicate toast' }).check({ force: true });
         await page.getByRole('checkbox', { name: 'Show toast with icon' }).uncheck({ force: true });
@@ -66,6 +66,18 @@ test.describe("Modals and Overlays Page", () => {
             await box.uncheck({ force: true });
             expect(await box.isChecked()).toBeFalsy();
         }
+    })
+
+    test('tooltips', async ({ page }) => {
+        await page.getByText('Tooltip').click(); 
+
+        const toolTipCard = page.locator('nb-card', { hasText: 'Tooltip Placements' });
+        await toolTipCard.getByRole('button', { name: 'Top' }).hover(); 
+
+        // page.getByRole('tooltip') // this is another example of how to grab the tooltip
+        // however, it will only work if a role attribute is added to the tooltip element in the code. 
+        const tooltip = await page.locator('nb-tooltip').textContent(); //.innerText() might be a better option here depending on the situation.
+        expect(tooltip).toEqual('This is a tooltip');
     })
 });
 
@@ -93,7 +105,7 @@ test('lists and dropdowns', async ({ page }) => {
     // for in loop cause we're looping through the object of the values
     for(const color in colors){
         await optionList.filter({hasText: color}).click();
-        await expect(header).toHaveCSS('background-color', colors[color]);
+        await expect(header).toHaveCSS('background-color', colors[color as keyof typeof colors]);
         if(color !== 'Corporate')
             await dropdownMenu.click();
     }
