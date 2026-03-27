@@ -175,5 +175,37 @@ test('lists and dropdowns', async ({ page }) => {
             expect(cellValue).toEqual(age);
         }
     }
+ })
+
+ test('datepicker', async ({page}) => {
+    await page.getByText('Forms').click();
+    await page.getByText('Datepicker').click();
+
+    const calendarInputField = page.getByPlaceholder('Form Picker')
+    await calendarInputField.click()
+
+    //helps locate the specific date of June 1 2023. you need a unique locator which is why
+    //we used the entire class and not just one. {exact: true} helps find the exact number instead of a partial match
+    // await page.locator('[class="day-cell ng-star-inserted"]').getByText('1',{exact: true}).click()
+    //await expect(calendarInputField).toHaveValue('June 1, 2023')
+
+    let date = new Date();
+    date.setDate(date.getDate() + 1)
+    const expectedDate = date.getDate().toString()
+    const expectedMonthShort = date.toLocaleString('En-US', {month: 'short'})
+    const expectedMonthLong = date.toLocaleString('En-US', {month: 'long'})
+    const expectedYear = date.getFullYear()
+    const dateToAssert = `${expectedMonthShort} ${expectedDate}, ${expectedYear}`
+
+    let calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    const expectedMonthAndYear = ` ${expectedMonthLong} ${expectedYear} `
+    while(!calendarMonthAndYear.includes(expectedMonthAndYear)){
+        await page.locator('nb-calendar-pageable-navigation [data-name="chevron right"]').click()
+        calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    }
+
+    //expectedDate variable replaces the static number of 1 to make the code more dynamic
+    await page.locator('[class="day-cell ng-star-inserted"]').getByText(expectedDate, {exact:true}).click()
+    await expect(calendarInputField).toHaveValue(dateToAssert)
 
  })
