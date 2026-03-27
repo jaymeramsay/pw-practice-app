@@ -228,7 +228,7 @@ test('lists and dropdowns', async ({ page }) => {
     const box = await tempBox.boundingBox()
     //puts your mouse in the middle of the bounding box
     const x = box.x + box.width / 2
-    const y = box.y + box?.height / 2
+    const y = box.y + box.height / 2
     //moves the mouse
     await page.mouse.move(x, y)
     await page.mouse.down()
