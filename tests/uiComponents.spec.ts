@@ -118,8 +118,7 @@ test('lists and dropdowns', async ({ page }) => {
 
 // part of the dialog box lesson but it lives on a different page than the Dialog section
  test('browser dialog boxes', async ({ page }) => { 
-        await page.getByText('Tables & Data').click();
-        await page.getByText('Smart Table').click();
+        
 
         //create an event listenter
         page.on('dialog', async dialog => {
@@ -224,11 +223,11 @@ test('lists and dropdowns', async ({ page }) => {
     const tempBox = page.locator('[tabtitle="Temperature"] ngx-temperature-dragger')
     await tempBox.scrollIntoViewIfNeeded()
 
-    //creates a box reference of where you can run your mouse
+    //creates a box reference of where you can run your mouse. ! asserts that box is not null
     const box = await tempBox.boundingBox()
     //puts your mouse in the middle of the bounding box
-    const x = box.x + box.width / 2
-    const y = box.y + box.height / 2
+    const x = box!.x + box!.width / 2
+    const y = box!.y + box!.height / 2
     //moves the mouse
     await page.mouse.move(x, y)
     await page.mouse.down()
